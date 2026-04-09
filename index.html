@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Clientes Funcional</title>
+    <style>
+        :root {
+            --primary-blue: #008cba;
+            --border-dark: #1a2a40;
+            --bg-header: #d3d3d3;
+            --btn-edit: #006400;
+            --btn-delete: #ff4d4d;
+        }
+
+        body { font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; background-color: #f4f4f4; }
+        
+        .container { width: 900px; background: white; border: 2px solid #333; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .header { background-color: var(--bg-header); padding: 10px; text-align: center; font-size: 1.2rem; border-bottom: 2px solid #333; font-weight: bold; }
+        
+        .content { display: flex; padding: 20px; gap: 20px; }
+
+        /* Formulario */
+        .form-section { flex: 1; border: 2px solid var(--border-dark); border-radius: 15px; padding: 20px; display: flex; flex-direction: column; gap: 12px; height: fit-content; }
+        input { width: 100%; padding: 10px; border: 2px solid var(--primary-blue); border-radius: 8px; box-sizing: border-box; outline: none; }
+        
+        .btn-add { 
+            background-color: var(--primary-blue); color: white; border: none; padding: 12px; 
+            border-radius: 10px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 0px #005f7a; 
+        }
+        .btn-add:active { transform: translateY(2px); box-shadow: 0 2px 0px #005f7a; }
+
+        /* Tabla */
+        .table-section { flex: 2; border: 2px solid var(--border-dark); padding: 0; overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; }
+        thead { background: #f9f9f9; }
+        th { text-align: left; padding: 12px; border-bottom: 2px solid #ccc; }
+        td { padding: 10px; border-bottom: 1px solid #eee; }
+
+        .action-btns { display: flex; gap: 5px; }
+        .btn-table { color: white; padding: 5px 10px; border: none; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
+        .edit { background-color: var(--btn-edit); }
+        .delete { background-color: var(--btn-delete); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">clientes</div>
+    
+    <div class="content">
+        <div class="form-section">
+            <input type="text" id="dni" placeholder="DNI">
+            <input type="text" id="nombre" placeholder="Nombre">
+            <input type="text" id="dir" placeholder="Dirección">
+            <input type="hidden" id="edit-index">
+            <button class="btn-add" id="btn-save">Agregar</button>
+        </div>
+
+        <div class="table-section">
+            <table id="tabla-clientes">
+                <thead>
+                    <tr>
+                        <th style="width: 120px;">opc</th>
+                        <th>dni</th>
+                        <th>nombre</th>
+                        <th>dir</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    const btnSave = document.getElementById('btn-save');
+    const tableBody = document.querySelector('#tabla-clientes tbody');
+    
+    // Función para Agregar o Actualizar
+    btnSave.onclick = function() {
+        const dni = document.getElementById('dni').value;
+        const nombre = document.getElementById('nombre').value;
+        const dir = document.getElementById('dir').value;
+
+        if(!dni || !nombre || !dir) {
+            alert("Por favor, completa todos los campos");
+            return;
+        }
+
+        // Crear una nueva fila
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>
+                <div class="action-btns">
+                    <button class="btn-table edit" onclick="editRow(this)">Edi</button>
+                    <button class="btn-table delete" onclick="deleteRow(this)">Elim</button>
+                </div>
+            </td>
+            <td>${dni}</td>
+            <td>${nombre}</td>
+            <td>${dir}</td>
+        `;
+
+        tableBody.appendChild(row);
+
+        // Limpiar campos
+        document.getElementById('dni').value = '';
+        document.getElementById('nombre').value = '';
+        document.getElementById('dir').value = '';
+    };
+
+    // Función para Eliminar
+    function deleteRow(btn) {
+        if(confirm('¿Estás seguro de eliminar este registro?')) {
+            const row = btn.parentNode.parentNode.parentNode;
+            row.remove();
+        }
+    }
+
+    // Función para Editar (Carga los datos al form y borra la fila actual)
+    function editRow(btn) {
+        const row = btn.parentNode.parentNode.parentNode;
+        const cells = row.getElementsByTagName('td');
+        
+        document.getElementById('dni').value = cells[1].innerText;
+        document.getElementById('nombre').value = cells[2].innerText;
+        document.getElementById('dir').value = cells[3].innerText;
+        
+        row.remove(); // Quitamos la fila para "reemplazarla" al dar click en Agregar
+    }
+</script>
+
+</body>
+</html>
